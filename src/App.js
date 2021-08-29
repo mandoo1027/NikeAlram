@@ -1,11 +1,13 @@
 /* eslint-disable */
 import { Navbar, Container , NavDropdown , Nav , Jumbotron } from 'react-bootstrap'
-import React, {lazy, Suspense, useState} from 'react'
+import React, {lazy, Suspense, useEffect, useState} from 'react'
 import './App.css';
 import { Link, Route, Switch } from 'react-router-dom'
 import axios from 'axios'
 
+
 import Main from './page/Main' 
+import {getNikeList} from './db/firebase' 
 let Detail  = lazy(()=>  import ( './page/Detail' ))
 import Cart from './page/Cart'
 import { connect } from 'react-redux';
@@ -14,6 +16,11 @@ const _ = require("lodash");
 export let 재고context = React.createContext() 
 
 function App(props) {
+
+  useEffect(()=>{ 
+    getNikeList()
+  },[])
+
   let [재고,재고변경] = useState([10,11,12])
 
   return (
