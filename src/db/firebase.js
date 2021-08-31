@@ -1,6 +1,6 @@
  
 import { initializeApp } from 'firebase/app';
-import { getDatabase ,ref, onValue} from 'firebase/database';
+import { getDatabase ,ref, limitToLast,query,onValue } from 'firebase/database'; 
 const firebaseConfig = {
     apiKey: "AIzaSyDBJpu7s4rI44xzG0aQc77UcpIc_nEHUgU",
     authDomain: "nikearlam.firebaseapp.com",
@@ -15,9 +15,24 @@ const firebaseConfig = {
 
 
 
-export function getNikeList(){
-const app = initializeApp(firebaseConfig);
-    let db = getDatabase(app)
-    const starCountRef = ref(db, 'nike');
-    return starCountRef
+export async function getNikeList(callbackData){
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const recentPostsRef = await  query(ref(db, 'nike'), limitToLast(100));
+    onValue(recentPostsRef, (snapshot) => {
+        let dataList = chageArrayList(snapshot)
+        callbackData(dataList)
+    })
+}
+
+function chageArrayList(snapshot){
+    let arrayList = []
+
+    snapshot.forEach(function(childSnapshot) {
+        var item = childSnapshot.val();
+        item.key = childSnapshot.key;
+
+        arrayList.push(item);
+    });
+    return arrayList
 }

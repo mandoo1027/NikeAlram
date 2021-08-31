@@ -1,27 +1,34 @@
 /* eslint-disable */
 import { Navbar, Container , NavDropdown , Nav , Jumbotron } from 'react-bootstrap'
 import React, {lazy, Suspense, useEffect, useState} from 'react'
-import './App.css';
+
 import { Link, Route, Switch } from 'react-router-dom'
 import axios from 'axios'
-
-
 import Main from './page/Main' 
-import {getNikeList} from './db/firebase' 
 let Detail  = lazy(()=>  import ( './page/Detail' ))
+import './App.css';
+
 import Cart from './page/Cart'
 import { connect } from 'react-redux';
 const _ = require("lodash");
+ 
 
-export let 재고context = React.createContext() 
+import {getNikeList} from './db/firebase' 
 
-function App(props) {
 
-  useEffect(()=>{ 
-    getNikeList()
-  },[])
+function App(props) { 
 
-  let [재고,재고변경] = useState([10,11,12])
+  let [nikeList,changeList] = useState([])
+
+  function callbackData(newData){ 
+    let copyData = nikeList
+    copyData.push([...newData])
+    changeList(copyData)
+    console.log()
+  } 
+  useEffect(()=>{  
+      getNikeList(callbackData)    
+  })
 
   return (
     <div className="App"> 
@@ -54,31 +61,19 @@ function App(props) {
 
       <Switch>
         <Route exact  path="/">
-            <Main />
-          <button className="btn btn-primary" onClick={()=>{
-            axios.get('https://codingapple1.github.io/shop/data2.json')
-            .then((result)=>{
-              
-              const newData = result.data 
-              newData.map((data)=>{
-                
-                data.url = "https://codingapple1.github.io/shop/shoes2.jpg"
-              })
-              props.dispatch({type : 'addShoes' , data : [...newData]})
-            })
-            .catch((e)=>{ 
-            }) 
+           <>
+          {cardPrint(nikeList)}
+          </>
+          <button className="btn btn-primary" onClick={()=>{ 
 
           }}>더보기</button>
         </Route>
 
         <Route exact path="/detail/:id">
-          
-          <재고context.Provider value={재고}>
+           
             <Suspense fallback={<div>로딩중이에요</div>}>
-            <Detail  shoes={props.shoes} 재고변경={재고변경}/>
-            </Suspense>
-          </재고context.Provider>
+            <Detail  shoes={props.shoes} />
+            </Suspense> 
         </Route>
 
         <Route exact path="/cart">
@@ -89,10 +84,27 @@ function App(props) {
     </div>
   );
 }
+function cardPrint(nikeList){
+  console.log(nikeList)
+  let arrayList = []
+  for(let i=0;i<nikeList.length;i++){
+    let divObject = 
+    <div className="col-md-4" key={i} onClick={()=>{
+      history.push('/detail/'+nikeList[i].key)
+    }}>
+      <img src={nikeList[i].imageSrc} width="100%" alt="" />
+      <h4>{nikeList[i].productName}</h4>
+      <p>{nikeList[i].eventDateText} & {nikeList[i].price}</p>
+    </div>
+    
+   arrayList.push(divObject)
+  }
+  return arrayList
+}
  
 function bind(state){
   return{
-    shose : state.reducerShoes
+      shose : state.reducerShoes 
   }
 }
 

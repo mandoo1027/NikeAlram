@@ -11,8 +11,21 @@ import list from './data'
 
 let alert초기값 = true
 
-
+let nikeList = []
 let shoes = list
+
+
+
+function reducerNikeManager(state = nikeList , action ){
+  if(action.type === 'addNike'){
+    console.log(2222222222)
+    let copyList = [...state]
+    copyList.push(action.nikeList)
+    return copyList
+  }else{
+    return state
+  }
+}
 
 
 function reducerAlert(state = alert초기값 , action){
@@ -45,8 +58,7 @@ let 기본state =
 function reducer(state = 기본state,action){
   if(action.type === 'addData'){
     let copyData = [...state]
-    let findId = action.data.id
-    debugger
+    let findId = action.data.id 
     let findIdx = copyData.findIndex((data)=>data.id === findId)
     if(findIdx === -1){
      copyData.push(action.data)

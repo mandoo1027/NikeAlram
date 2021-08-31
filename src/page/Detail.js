@@ -6,14 +6,12 @@ import { connect } from 'react-redux'
 import '../detail2.scss'
 
 import {CSSTransition} from "react-transition-group"
-
-import {재고context}  from '../App.js'
+ 
 const _ = require("lodash");
 
 
 function Detail(props){
-
-    let 재고 = useContext(재고context)
+ 
     let [isShow,isChangeShow] = useState(true)
     let { id } = useParams();
     let history = useHistory();
@@ -50,12 +48,8 @@ function Detail(props){
                 <div className="col-md-6 mt-4">
                 <h4 className="pt-5">{findObject.title}</h4>
                 <p>{findObject.content}</p>
-                <p>{findObject.price}</p>
-                <Info ></Info>
-                <button className="btn btn-danger" onClick={()=>{
-                   let copyData = _.cloneDeep(재고)
-                   copyData[0] = copyData[0]-1
-                    props.재고변경(copyData)
+                <p>{findObject.price}</p> 
+                <button className="btn btn-danger" onClick={()=>{ 
                 }}>주문하기</button> 
                 &nbsp;
                 <button className="btn btn-danger" onClick={()=>{
@@ -101,15 +95,7 @@ function TabContent(props){
         return  <div>1번째 내용입니다.</div> 
     }
     
-}
-
-function Info(){
-    let 재고 = useContext(재고context)
-    return(
-        <p>재고 : {재고[0]} </p>
-    )
-}
-
+} 
 function bind(state){
     return {
         shoes : state.reducerShoes
