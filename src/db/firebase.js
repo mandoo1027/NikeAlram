@@ -1,5 +1,4 @@
- 
-import { initializeApp } from 'firebase/app';
+ import { initializeApp } from 'firebase/app';
 import { getDatabase ,ref, limitToLast,query,onValue } from 'firebase/database'; 
 const firebaseConfig = {
     apiKey: "AIzaSyDBJpu7s4rI44xzG0aQc77UcpIc_nEHUgU",
@@ -15,10 +14,10 @@ const firebaseConfig = {
 
 
 
-export async function getNikeList(callbackData){
+export   function getNikeList(callbackData){
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const recentPostsRef = await  query(ref(db, 'nike'), limitToLast(100));
+    const recentPostsRef =  query(ref(db, 'nike'), limitToLast(100));
     onValue(recentPostsRef, (snapshot) => {
         let dataList = chageArrayList(snapshot)
         callbackData(dataList)
@@ -27,11 +26,9 @@ export async function getNikeList(callbackData){
 
 function chageArrayList(snapshot){
     let arrayList = []
-
     snapshot.forEach(function(childSnapshot) {
         var item = childSnapshot.val();
         item.key = childSnapshot.key;
-
         arrayList.push(item);
     });
     return arrayList

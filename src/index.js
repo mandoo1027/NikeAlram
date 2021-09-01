@@ -18,9 +18,8 @@ let shoes = list
 
 function reducerNikeManager(state = nikeList , action ){
   if(action.type === 'addNike'){
-    console.log(2222222222)
     let copyList = [...state]
-    copyList.push(action.nikeList)
+    copyList = action.data
     return copyList
   }else{
     return state
@@ -79,7 +78,7 @@ function reducer(state = 기본state,action){
   }
   
 }
-let store = createStore(combineReducers({reducer,reducerAlert,reducerShoes}))
+let store = createStore(combineReducers({reducerNikeManager,reducer,reducerAlert,reducerShoes}))
  
 
 ReactDOM.render(

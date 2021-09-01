@@ -9,7 +9,8 @@ let Detail  = lazy(()=>  import ( './page/Detail' ))
 import './App.css';
 
 import Cart from './page/Cart'
-import { connect } from 'react-redux';
+import * as util from './util/util'
+import { connect, useSelector } from 'react-redux';
 const _ = require("lodash");
  
 
@@ -18,17 +19,15 @@ import {getNikeList} from './db/firebase'
 
 function App(props) { 
 
-  let [nikeList,changeList] = useState([])
 
-  function callbackData(newData){ 
-    let copyData = nikeList
-    copyData.push([...newData])
-    changeList(copyData)
-    console.log()
+  function callbackData(newData){  
+    let orderData =  newData.sort(util.dateSort)
+    props.dispatch({type : 'addNike' , data : orderData})
   } 
+
   useEffect(()=>{  
       getNikeList(callbackData)    
-  })
+  },[])
 
   return (
     <div className="App"> 
@@ -62,17 +61,14 @@ function App(props) {
       <Switch>
         <Route exact  path="/">
            <>
-          {cardPrint(nikeList)}
-          </>
-          <button className="btn btn-primary" onClick={()=>{ 
-
-          }}>더보기</button>
+          {props.nikeList ? cardPrint(props.nikeList):null}
+          </> 
         </Route>
 
         <Route exact path="/detail/:id">
            
             <Suspense fallback={<div>로딩중이에요</div>}>
-            <Detail  shoes={props.shoes} />
+            <Detail  nikeList={props.nikeList} />
             </Suspense> 
         </Route>
 
@@ -89,12 +85,16 @@ function cardPrint(nikeList){
   let arrayList = []
   for(let i=0;i<nikeList.length;i++){
     let divObject = 
-    <div className="col-md-4" key={i} onClick={()=>{
-      history.push('/detail/'+nikeList[i].key)
-    }}>
-      <img src={nikeList[i].imageSrc} width="100%" alt="" />
-      <h4>{nikeList[i].productName}</h4>
-      <p>{nikeList[i].eventDateText} & {nikeList[i].price}</p>
+    <div style={ {padding :10} } className="col-md-4" key={i}  onClick={()=>{
+      window.open(nikeList[i]?.productUrl)
+     }}
+   >
+      <img  src={nikeList[i]?.imageSrc} width="100%" alt="" onClick={()=>{ 
+    }}></img>
+      <h4 style={{marginTop:5}}> 
+        {nikeList[i]?.productName} 
+        </h4>
+      <p>{nikeList[i]?.eventDateText}</p>
     </div>
     
    arrayList.push(divObject)
@@ -104,7 +104,7 @@ function cardPrint(nikeList){
  
 function bind(state){
   return{
-      shose : state.reducerShoes 
+     nikeList : state.reducerNikeManager 
   }
 }
 
